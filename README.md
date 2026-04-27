@@ -14,12 +14,17 @@ Fitlytics is a comprehensive fitness tracking web application built with Vue 3 a
 
 ## Tech Stack
 
-- **Framework**: [Vue 3](https://vuejs.org/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **State Management**: [Pinia](https://pinia.vuejs.org/)
-- **Routing**: [Vue Router](https://router.vuejs.org/)
-- **Styling**: [Bulma](https://bulma.io/)
-- **HTTP Client**: [Axios](https://axios-http.com/)
+- **Frontend**:
+    - **Framework**: [Vue 3](https://vuejs.org/)
+    - **Language**: [TypeScript](https://www.typescriptlang.org/)
+    - **State Management**: [Pinia](https://pinia.vuejs.org/)
+    - **Routing**: [Vue Router](https://router.vuejs.org/)
+    - **Styling**: [Bulma](https://bulma.io/)
+    - **HTTP Client**: [Axios](https://axios-http.com/)
+
+- **Backend**:
+    - **Framework**: Node.js + Express.js
+    - **Database**: [Supabase](https://supabase.com/)
 
 ## Installation
 
