@@ -1,19 +1,20 @@
 import type { ApiResponse } from "@/types/api-response";
-import type { ActivityType, CreateActivityDto, UpdateActivityDto, UserActivityWithDetails } from "../../../server/types/activities.types";
+import type { ActivityType, CreateActivityDto, UpdateActivityDto, UserActivitiesResponse, UserActivityWithDetails } from "../../../server/types/activities.types";
 import { httpClientWithSession } from "./http-api.services";
+import type { PaginationRequest } from "../../../server/types/api-response";
 
 const ACTIVITIES_API_BASE_URL = '/activity';
 
-export const getAllActivities = async () => {
-    return await httpClientWithSession<ApiResponse<UserActivityWithDetails[]>>(`${ACTIVITIES_API_BASE_URL}`);
+export const getAllActivities = async (paginationRequest?: PaginationRequest) => {
+    return await httpClientWithSession<ApiResponse<UserActivitiesResponse>>(`${ACTIVITIES_API_BASE_URL}`, undefined, {}, false, paginationRequest);
 };
 
 export const getAllActivityTypes = async () => {
     return await httpClientWithSession<ApiResponse<ActivityType[]>>(`${ACTIVITIES_API_BASE_URL}/types`);
 };
 
-export const getLoggedInUserActivities = async () => {
-    return await httpClientWithSession<ApiResponse<UserActivityWithDetails[]>>(`${ACTIVITIES_API_BASE_URL}/self`);
+export const getLoggedInUserActivities = async (paginationRequest?: PaginationRequest) => {
+    return await httpClientWithSession<ApiResponse<UserActivitiesResponse>>(`${ACTIVITIES_API_BASE_URL}/self`, undefined, {}, false, paginationRequest);
 };
 
 export const addActivity = async (activity: CreateActivityDto) => {

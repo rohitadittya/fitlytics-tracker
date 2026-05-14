@@ -1,8 +1,9 @@
 import { AppError } from "../custom-errors";
 import { dbClient } from "../db/db";
-import { ActivityType, CreateActivityDto, UpdateActivityDto, UserActivity, UserActivityWithDetails } from "../types/activities.types";
+import { ActivityType, CreateActivityDto, UpdateActivityDto, UserActivitiesResponse, UserActivity, UserActivityWithDetails } from "../types/activities.types";
 import * as UserActionModel from "./user-action.model";
 import { getUserById } from "./user.model";
+import { PaginationRequest } from "../types/api-response";
 
 const TABLE_NAME = "UserActivity";
 
@@ -28,14 +29,17 @@ const getAllActivityTypes = async (): Promise<ActivityType[]> => {
     return await fetchActivityTypes();
 };
 
-const getAllActivities = async (loggedInUserId: number): Promise<UserActivityWithDetails[]> => {
-    const { data: activities, error } = await dbClient.from(TABLE_NAME).select("*").order("date", { ascending: false });
+const getAllActivities = async (loggedInUserId: number, paginationRequest: PaginationRequest): Promise<UserActivitiesResponse> => {
+    const offset = Number(paginationRequest.offset) || 0;
+    const limit = Number(paginationRequest.limit) || 10;
+    const { data: activities, error } = await dbClient.from(TABLE_NAME).select("*").range(offset, offset + limit - 1).order("date", { ascending: false });
+    const { data: count } = await dbClient.from(TABLE_NAME).select("id", { count: "exact" });
 
     if (error) {
-        throw new AppError("Error while fetching activities: " + error.message, 500);
+        throw new AppError("Error while fetching activities: " + error?.message, 500);
     }
 
-    return await Promise.all(
+    const feedActivities = await Promise.all(
         activities?.map(async (activity) => {
             const user = await getUserById(activity.userId, ["name", "image"]);
             const { likesCount, commentsCount, isLikedByUser } = await UserActionModel.getActionCountsByActivityId(activity.id, loggedInUserId);
@@ -49,16 +53,24 @@ const getAllActivities = async (loggedInUserId: number): Promise<UserActivityWit
             }
         })
     );
+
+    return {
+        activities: feedActivities,
+        total: count?.length ?? 0
+    };
 };
 
-const getLoggedInUserActivities = async (userId: number): Promise<UserActivityWithDetails[]> => {
-    const { data: activities, error } = await dbClient.from(TABLE_NAME).select("*").eq("userId", userId).order("date", { ascending: false });
+const getLoggedInUserActivities = async (userId: number, paginationRequest: PaginationRequest): Promise<UserActivitiesResponse> => {
+    const offset = Number(paginationRequest.offset) || 0;
+    const limit = Number(paginationRequest.limit) || 10;
+    const { data: activities, error } = await dbClient.from(TABLE_NAME).select("*").eq("userId", userId).range(offset, offset + limit - 1).order("date", { ascending: false });
+    const { data: count } = await dbClient.from(TABLE_NAME).select("id", { count: "exact" }).eq("userId", userId);
 
     if (error) {
         throw new AppError("Error while fetching activities: " + error.message, 500);
     }
 
-    return await Promise.all(activities.map(async (activity) => {
+    const userActivities = await Promise.all(activities.map(async (activity) => {
         const user = await getUserById(activity.userId, ["name", "image"]);
         const { likesCount, commentsCount, isLikedByUser } = await UserActionModel.getActionCountsByActivityId(activity.id, userId);
         return {
@@ -70,6 +82,11 @@ const getLoggedInUserActivities = async (userId: number): Promise<UserActivityWi
             isLikedByUser
         }
     }));
+
+    return {
+        activities: userActivities,
+        total: count?.length ?? 0
+    };
 };
 
 const getActivityById = async (activityId: number, loggedInUserId: number): Promise<UserActivityWithDetails | null> => {

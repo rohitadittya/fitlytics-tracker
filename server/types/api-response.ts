@@ -21,3 +21,8 @@ export const apiError = <T>(message: string, status: number): ApiResponse<T> => 
         status
     };
 };
+
+export type PaginationRequest = {
+    offset?: number
+    limit?: number
+}

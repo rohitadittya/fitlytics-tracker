@@ -1,5 +1,6 @@
 import { useSessionStore } from "@/stores/sessions";
 import { useUserStore } from "@/stores/user";
+import type { PaginationRequest } from "../../../server/types/api-response";
 
 const API_BASE_URL = import.meta.env.VITE_API_ROOT;
 
@@ -25,6 +26,7 @@ const httpRestClient = <T>(
     };
 
     return fetch(url, options).then((res) => {
+        console.log("res", res)
         if (!res.ok) {
             if (res.headers.get('Content-Type')?.includes('application/json')) {
                 return res.json().then((data) => {
@@ -39,11 +41,22 @@ const httpRestClient = <T>(
     });
 };
 
-export const httpClientWithSession = async <T>(endpoint: string, data?: unknown, options: RequestInit = {}, invalidateSessionOnFailure: boolean = false) => {
+export const httpClientWithSession = async <T>(endpoint: string, data?: unknown, options: RequestInit = {}, invalidateSessionOnFailure: boolean = false, paginationRequest?: PaginationRequest) => {
     const session = useSessionStore();
-    return await session.httpClientApi<T>(endpoint, data, options, invalidateSessionOnFailure);
+    let url = `api${endpoint}`
+
+    if (paginationRequest) {
+        url += `?${new URLSearchParams(paginationRequest as Record<string, string>)}`;
+    }
+
+    return await session.httpClientApi<T>(url, data, options, invalidateSessionOnFailure);
 };
 
-export const httpClient = async <T>(endpoint: string, data?: unknown, options: RequestInit = {}) => {
-    return await httpRestClient<T>(`${API_BASE_URL}${endpoint}`, data, options)
+export const httpClient = async <T>(endpoint: string, data?: unknown, options: RequestInit = {}, paginationRequest?: PaginationRequest) => {
+    let url = endpoint
+
+    if (paginationRequest) {
+        url += `?${new URLSearchParams(paginationRequest as Record<string, string>)}`;
+    }
+    return await httpRestClient<T>(url, data, options)
 };

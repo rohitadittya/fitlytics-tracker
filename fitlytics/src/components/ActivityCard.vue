@@ -15,6 +15,7 @@ const props = defineProps({
     }
 })
 
+console.log("props.activity", props.activity);
 const activitiesStore = useActivitiesStore();
 
 const deleteActivity = () => {
@@ -48,7 +49,7 @@ const commentOnActivity = () => {
                 <article class="media">
                     <div class="media-content">
                         <p class="title is-6 mb-0">
-                            {{ activity.username.split(" ")[0] }}
+                            {{ activity.username?.split(" ")[0] }}
                         </p>
                         <p class="subtitle is-7 has-text-grey">
                             is {{ activity.type }}

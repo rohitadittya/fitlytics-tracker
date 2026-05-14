@@ -2,13 +2,13 @@ import { asyncHandler } from "../utils/async-handler";
 import * as ActivityModel from "../models/activities.model";
 import { getLoggedInUserId } from "../utils/auth-helpers.utils";
 import { ApiResponse, apiResponse } from "../types/api-response";
-import { ActivityType, UserActivityWithDetails } from "../types/activities.types";
+import { ActivityType, UserActivityWithDetails, UserActivitiesResponse } from "../types/activities.types";
 
 
 const getAllActivities = asyncHandler(async (req, res) => {
     const loggedInUserId = getLoggedInUserId(req);
-    const activities = await ActivityModel.getAllActivities(loggedInUserId);
-    const response: ApiResponse<UserActivityWithDetails[]> = apiResponse(activities);
+    const activities = await ActivityModel.getAllActivities(loggedInUserId, req.query);
+    const response: ApiResponse<UserActivitiesResponse> = apiResponse(activities);
     res.status(200).send(response);
 });
 
@@ -20,8 +20,8 @@ const getAllActivityTypes = asyncHandler(async (req, res) => {
 
 const getLoggedInUserActivities = asyncHandler(async (req, res) => {
     const userId = getLoggedInUserId(req);
-    const activities = await ActivityModel.getLoggedInUserActivities(userId);
-    const response: ApiResponse<UserActivityWithDetails[]> = apiResponse(activities);
+    const activities = await ActivityModel.getLoggedInUserActivities(userId, req.query);
+    const response: ApiResponse<UserActivitiesResponse> = apiResponse(activities);
     res.status(200).send(response);
 });
 

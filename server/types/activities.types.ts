@@ -24,6 +24,11 @@ export type UserActivityWithDetails = UserActivity & {
   commentsCount: number
 };
 
+export type UserActivitiesResponse = {
+  activities: UserActivityWithDetails[];
+  total: number;
+};
+
 export type CreateActivityDto = {
   type: ActivityType;
   duration: number;
