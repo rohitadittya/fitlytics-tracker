@@ -32,7 +32,6 @@ export const useActivitiesStore = defineStore("activities", () => {
   const loadAllActivities = async (paginationRequest?: PaginationRequest) => {
     paginationRequest = paginationRequest ?? { limit: limitAllActivities, offset: offsetAllActivities.value };
     const response = await getAllActivities(paginationRequest);
-    console.log(response)
     allActivities.value.push(...(response.data?.activities || []));
     offsetAllActivities.value += response.data?.activities.length || 0;
     totalAllActivities.value = response.data?.total || 0;
@@ -97,7 +96,7 @@ export const useActivitiesStore = defineStore("activities", () => {
   const updateUserActivityByAction = (activityId: number, type: ActionType, action: 'create' | 'delete') => {
     const activityIndex = allActivities.value.findIndex(a => a.id === activityId);
 
-    if (activityIndex) {
+    if (activityIndex !== -1) {
       const activity = allActivities.value[activityIndex];
       if (!activity) return;
 
@@ -122,7 +121,7 @@ export const useActivitiesStore = defineStore("activities", () => {
 
     const userActivityIndex = allLoggedInUserActivities.value.findIndex(a => a.id === activityId);
 
-    if (userActivityIndex) {
+    if (userActivityIndex !== -1) {
       const userActivity = allLoggedInUserActivities.value[userActivityIndex];
       if (!userActivity) return;
 
@@ -146,7 +145,7 @@ export const useActivitiesStore = defineStore("activities", () => {
   };
 
   const getUserActivityById = (activityId: number) => {
-    return allLoggedInUserActivities.value.find((activity) => activity.id === activityId);
+    return [...allActivities.value, ...allLoggedInUserActivities.value].find((activity) => activity.id === activityId);
   };
 
   return {

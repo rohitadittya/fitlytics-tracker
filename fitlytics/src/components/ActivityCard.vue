@@ -15,7 +15,6 @@ const props = defineProps({
     }
 })
 
-console.log("props.activity", props.activity);
 const activitiesStore = useActivitiesStore();
 
 const deleteActivity = () => {

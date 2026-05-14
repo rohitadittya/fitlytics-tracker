@@ -26,7 +26,6 @@ const httpRestClient = <T>(
     };
 
     return fetch(url, options).then((res) => {
-        console.log("res", res)
         if (!res.ok) {
             if (res.headers.get('Content-Type')?.includes('application/json')) {
                 return res.json().then((data) => {

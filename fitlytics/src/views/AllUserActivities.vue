@@ -10,10 +10,7 @@ const activitiesStore = useActivitiesStore();
 const isModalOpen = ref(false);
 const commentOnActivity = ref(false);
 const editActivityId = ref<number | undefined>(undefined);
-const feed = computed(() => {
-    console.log("activitiesStore.activityFeed", activitiesStore.activityFeed);
-    return activitiesStore.activityFeed
-});
+const feed = computed(() => activitiesStore.activityFeed);
 const loading = ref(false);
 
 const containerRef = ref<HTMLElement | null>(null);
@@ -79,15 +76,15 @@ const closeModal = () => {
                         <ActivityCard :activity="activity" @commentOnActivity="commentOnActivityModal(activity.id)" />
                     </div>
                 </div>
-                <div class="has-text-centered my-4">
-                    Showing {{ feed.length }} of {{ activitiesStore.totalAllActivities }}
-                </div>
                 <div v-if="loading" class="p-4">
                     <div class="skeleton-block"></div>
                     <div class="skeleton-block mt-2"></div>
                 </div>
             </div>
         </section>
+    </div>
+    <div class="has-text-centered my-4">
+        Showing {{ feed.length }} of {{ activitiesStore.totalAllActivities }}
     </div>
 
     <AddActivityModal :isOpen="isModalOpen" :editOnlyActivityActions="commentOnActivity"

@@ -91,11 +91,6 @@ useInfiniteScroll(
                     </div>
 
                 </div>
-
-                <div class="has-text-centered my-4">
-                    Showing {{ loggedInUserActivities.length }} of {{ activitiesStore.totalLoggedInUserActivities }}
-                </div>
-
                 <div v-if="loading" class="p-4">
                     <div class="skeleton-block"></div>
                     <div class="skeleton-block mt-2"></div>
@@ -104,6 +99,9 @@ useInfiniteScroll(
             </div>
 
         </section>
+    </div>
+    <div class="has-text-centered my-4">
+        Showing {{ loggedInUserActivities.length }} of {{ activitiesStore.totalLoggedInUserActivities }}
     </div>
 
     <AddActivityModal :isOpen="isModalOpen" :editActivityId="editActivityId" @close="closeModal" />
